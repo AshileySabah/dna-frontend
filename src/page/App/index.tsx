@@ -19,6 +19,32 @@ const createMatrix = (dimension: number) => {
   return newMatrix;
 };
 
+const getVertical = (matrix: string[][]) => {
+  const dimension = matrix?.length;
+  const verticalArrays = [];
+  for (let column = 0; column < dimension; column++) {
+    const eachVerticalArrays = [];
+    for (let row = 0; row < dimension; row++) {
+      eachVerticalArrays?.push(matrix[row][column]);
+    }
+    verticalArrays?.push(eachVerticalArrays);
+  }
+  return verticalArrays;
+};
+
+const getDiagonal = (matrix: string[][]) => {
+  const dimension = matrix?.length;
+  const diagonalArrays = [];
+  for (let i = 0; i < dimension; i++) {
+    diagonalArrays?.push(matrix[i][i]);
+
+    for (let j = 0; j < dimension; j++) {
+      diagonalArrays?.push(matrix[j][j]);
+    }
+  }
+  return diagonalArrays;
+};
+
 interface IDNATest {
   dimension: number;
   matrix: string[][];
