@@ -34,14 +34,36 @@ const getVertical = (matrix: string[][]) => {
 
 const getDiagonal = (matrix: string[][]) => {
   const dimension = matrix?.length;
-  const diagonalArrays = [];
-  for (let i = 0; i < dimension; i++) {
-    diagonalArrays?.push(matrix[i][i]);
+  const diagonalArrays: string[][] = [];
 
-    for (let j = 0; j < dimension; j++) {
-      diagonalArrays?.push(matrix[j][j]);
+  // diagonals - top left to bottom right
+  for (let column = 0; column < dimension; column++) {
+    const diagonalLeft: string[] = [];
+    for (let row = 0; row < dimension; row++) {
+      const diagonal = matrix[row][column + row];
+      if (diagonal) {
+        diagonalLeft?.push(diagonal);
+      }
+    }
+    if (diagonalLeft?.length >= 3) {
+      diagonalArrays?.push(diagonalLeft);
     }
   }
+
+  // diagonal - top right to bottom left
+  for (let column = dimension - 1; column >= 0; column--) {
+    const diagonalRight: string[] = [];
+    for (let row = 0; row < dimension; row++) {
+      const diagonal = matrix[row][column - row];
+      if (diagonal) {
+        diagonalRight?.push(diagonal);
+      }
+    }
+    if (diagonalRight?.length >= 3) {
+      diagonalArrays?.push(diagonalRight);
+    }
+  }
+
   return diagonalArrays;
 };
 
