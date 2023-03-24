@@ -8,7 +8,7 @@ import {
 import { TextField } from "./styles";
 
 interface IFormProps {
-  label: string;
+  label?: string;
   name: string;
   control: Control<any>;
   setValue?: any;
