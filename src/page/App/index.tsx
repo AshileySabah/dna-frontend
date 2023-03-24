@@ -60,6 +60,17 @@ const getDiagonal = (matrix: string[][]) => {
     diagonalArrays?.push(diagonal2);
   }
 
+  for (let i = 1; i < dimension - 1; i++) {
+    const diagonal1 = [];
+    const diagonal2 = [];
+    for (let j = 0; j <= i; j++) {
+      diagonal1?.push(matrix[j][i - j]);
+      diagonal2?.push(matrix[dimension - 1 - j][dimension - 1 - i + j]);
+    }
+    diagonalArrays?.push(diagonal1);
+    diagonalArrays?.push(diagonal2);
+  }
+
   // Remove empty diagonals
   return diagonalArrays?.filter((diagonal) => diagonal?.length > 0);
 };
@@ -105,6 +116,8 @@ export const App = () => {
   useEffect(() => {
     setValue("matrix", createMatrix(dimension));
   }, [dimension]);
+
+  console.log(getDiagonal(matrix));
 
   return (
     <Box sx={{ backgroundColor: "lightblue", height: "calc(100vh - 72px)" }}>
