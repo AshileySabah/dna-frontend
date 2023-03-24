@@ -34,37 +34,34 @@ const getVertical = (matrix: string[][]) => {
 
 const getDiagonal = (matrix: string[][]) => {
   const dimension = matrix?.length;
-  const diagonalArrays: string[][] = [];
+  const diagonalArrays = [];
 
-  // diagonals - top left to bottom right
-  for (let column = 0; column < dimension; column++) {
-    const diagonalLeft: string[] = [];
-    for (let row = 0; row < dimension; row++) {
-      const diagonal = matrix[row][column + row];
-      if (diagonal) {
-        diagonalLeft?.push(diagonal);
-      }
+  const mainDiagonal = [];
+  for (let i = 0; i < dimension; i++) {
+    mainDiagonal?.push(matrix[i][i]);
+  }
+  diagonalArrays?.push(mainDiagonal);
+
+  const secondaryDiagonal = [];
+  for (let i = 0; i < dimension; i++) {
+    secondaryDiagonal?.push(matrix[i][dimension - i - 1]);
+  }
+  diagonalArrays?.push(secondaryDiagonal);
+
+  // Get remaining diagonals
+  for (let i = 1; i < dimension - 1; i++) {
+    const diagonal1 = [];
+    const diagonal2 = [];
+    for (let j = 0; j <= i; j++) {
+      diagonal1?.push(matrix[i - j][j]);
+      diagonal2?.push(matrix[dimension - 1 - i + j][dimension - 1 - j]);
     }
-    if (diagonalLeft?.length >= 3) {
-      diagonalArrays?.push(diagonalLeft);
-    }
+    diagonalArrays?.push(diagonal1);
+    diagonalArrays?.push(diagonal2);
   }
 
-  // diagonal - top right to bottom left
-  for (let column = dimension - 1; column >= 0; column--) {
-    const diagonalRight: string[] = [];
-    for (let row = 0; row < dimension; row++) {
-      const diagonal = matrix[row][column - row];
-      if (diagonal) {
-        diagonalRight?.push(diagonal);
-      }
-    }
-    if (diagonalRight?.length >= 3) {
-      diagonalArrays?.push(diagonalRight);
-    }
-  }
-
-  return diagonalArrays;
+  // Remove empty diagonals
+  return diagonalArrays?.filter((diagonal) => diagonal?.length > 0);
 };
 
 interface IDNATest {
