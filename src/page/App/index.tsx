@@ -75,6 +75,15 @@ const getDiagonal = (matrix: string[][]) => {
   return diagonalArrays?.filter((diagonal) => diagonal?.length > 0);
 };
 
+const checkEqualAndConsecutiveItems = (array: string[]) => {
+  for (let i = 0; i < array?.length - 2; i++) {
+    if (array[i] === array[i + 1] && array[i + 1] === array[i + 2]) {
+      return true;
+    }
+  }
+  return false;
+};
+
 interface IDNATest {
   dimension: number;
   matrix: string[][];
@@ -116,8 +125,6 @@ export const App = () => {
   useEffect(() => {
     setValue("matrix", createMatrix(dimension));
   }, [dimension]);
-
-  console.log(getDiagonal(matrix));
 
   return (
     <Box sx={{ backgroundColor: "lightblue", height: "calc(100vh - 72px)" }}>
