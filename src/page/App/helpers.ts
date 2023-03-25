@@ -24,25 +24,33 @@ export const getRemaningDiagonal = (matrix: string[][], dimension: number) => {
   const diagonalArrays = [];
 
   for (let i = 1; i < dimension - 1; i++) {
-    const diagonal1 = [];
-    const diagonal2 = [];
+    const diagonal1: string[] = [];
+    const diagonal2: string[] = [];
     for (let j = 0; j <= i; j++) {
       diagonal1?.push(matrix[i - j][j]);
       diagonal2?.push(matrix[dimension - 1 - i + j][dimension - 1 - j]);
     }
-    diagonalArrays?.push(diagonal1);
-    diagonalArrays?.push(diagonal2);
+    if (diagonal1?.length >= 3) {
+      diagonalArrays?.push(diagonal1);
+    }
+    if (diagonal2?.length >= 3) {
+      diagonalArrays?.push(diagonal2);
+    }
   }
 
   for (let i = 1; i < dimension - 1; i++) {
-    const diagonal1 = [];
-    const diagonal2 = [];
+    const diagonal1: string[] = [];
+    const diagonal2: string[] = [];
     for (let j = 0; j <= i; j++) {
       diagonal1?.push(matrix[j][i - j]);
       diagonal2?.push(matrix[dimension - 1 - j][dimension - 1 - i + j]);
     }
-    diagonalArrays?.push(diagonal1);
-    diagonalArrays?.push(diagonal2);
+    if (diagonal1?.length >= 3) {
+      diagonalArrays?.push(diagonal1);
+    }
+    if (diagonal2?.length >= 3) {
+      diagonalArrays?.push(diagonal2);
+    }
   }
 
   return diagonalArrays;
@@ -105,8 +113,7 @@ export const getDiagonal = (matrix: string[][]) => {
   diagonalArrays?.push(...topLeftToRightBottom);
   diagonalArrays?.push(...topTopRightToLeftBottom);
 
-  // Remove empty diagonals
-  return removeDuplicateArrays(diagonalArrays);
+  return diagonalArrays;
 };
 
 export const checkEqualAndConsecutiveItems = (array: string[]) => {
@@ -151,7 +158,7 @@ export const identifyAnomalies = (matrix: string[][]) => {
   }
 
   return {
-    diagonalOccurrences: diagonalOccurrences?.length,
+    diagonalOccurrences: Math?.ceil(diagonalOccurrences?.length / 2),
     verticalOccurrences: verticalOccurrences?.length,
     horizontalOccurrences: horizontalOccurrences?.length,
   };
