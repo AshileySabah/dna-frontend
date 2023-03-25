@@ -105,7 +105,7 @@ export const App = () => {
                 {row?.map((item, itemIndex) => (
                   <Box key={itemIndex}>
                     <Input
-                      name={`matrix.${rowIndex}.${itemIndex}`}
+                      name={`matrixInterfaceField.${rowIndex}.${itemIndex}`}
                       control={control}
                     />
                   </Box>

@@ -63,6 +63,7 @@ export const validation = yup.object().shape({
     .required("Dimension is required."),
   matrixInterfaceField: yup
     .array()
+    .of(yup.array().of(yup.string().required("The matrix's field is required")))
     .required("Matrix is required.")
     .test(
       "testIfIsMultidimentional",
