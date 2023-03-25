@@ -6,7 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Grid, Typography } from "@mui/material";
 
 import dnaLogo from "/dna-logo.png";
-import { validation } from "./validation";
+import { validateStringArray, validation } from "./validation";
 import { Input } from "../../components/Form/Input";
 import { useSnackbar } from "../../hooks/Snackbar";
 import { createMatrix } from "./helpers";
@@ -16,11 +16,12 @@ import { Radio } from "../../components/Form/Radio";
 import { IDNATest, defaultValues, insertMethods } from "./types";
 
 export const App = () => {
-  const { control, setValue, watch, reset, handleSubmit } = useForm<IDNATest>({
-    defaultValues,
-    mode: "onBlur",
-    resolver: yupResolver(validation),
-  });
+  const { control, setValue, watch, handleSubmit, clearErrors } =
+    useForm<IDNATest>({
+      defaultValues,
+      mode: "onBlur",
+      resolver: yupResolver(validation),
+    });
   const { createSnack } = useSnackbar();
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -29,20 +30,40 @@ export const App = () => {
   const matrixInterfaceField = watch("matrixInterfaceField");
   const insertMethod = watch("insertMethod");
 
-  const showMatrix = matrixInterfaceField?.length > 0 && dimension >= 3;
-
   useEffect(() => {
-    setValue("matrixInterfaceField", createMatrix(Number(dimension)));
+    if (dimension >= 3 && dimension <= 10) {
+      setValue("matrixInterfaceField", createMatrix(Number(dimension)));
+    } else {
+      setValue("matrixInterfaceField", []);
+    }
   }, [dimension]);
 
   const getDNAResult = useCallback(async (data: IDNATest) => {
-    console.log(data);
+    const payload = {
+      matrix:
+        data?.insertMethod === "MI"
+          ? data?.matrixInterfaceField
+          : validateStringArray(data?.matrixEnterArrayField)?.array,
+    };
+
+    console.log(payload);
   }, []);
 
   const onSubmit = async (data: IDNATest) => {
     setLoading(true);
     await getDNAResult(data);
     setLoading(false);
+  };
+
+  const clearMatrixInterfaceFields = () => {
+    setValue("dimension", "");
+    setValue("matrixInterfaceField", []);
+    clearErrors();
+  };
+
+  const clearMatrixEnterArrayField = () => {
+    setValue("matrixEnterArrayField", "");
+    clearErrors();
   };
 
   return (
@@ -82,7 +103,11 @@ export const App = () => {
               />
             </Grid>
             <Grid item xs={12} sm={4} md={3} lg={2}>
-              <Button variant="outlined" fullWidth onClick={() => reset()}>
+              <Button
+                variant="outlined"
+                fullWidth
+                onClick={clearMatrixInterfaceFields}
+              >
                 Clear fields
               </Button>
             </Grid>
@@ -91,6 +116,7 @@ export const App = () => {
                 variant="contained"
                 fullWidth
                 onClick={handleSubmit(onSubmit)}
+                loading={loading}
               >
                 Submit DNA test
               </Button>
@@ -98,7 +124,7 @@ export const App = () => {
           </>
         ) : null}
 
-        {insertMethod === "MI" && showMatrix ? (
+        {insertMethod === "MI" && matrixInterfaceField?.length > 0 ? (
           <Grid item xs={12}>
             {matrixInterfaceField?.map((row, rowIndex) => (
               <Box key={rowIndex} display="flex">
@@ -125,7 +151,11 @@ export const App = () => {
               />
             </Grid>
             <Grid item xs={12} sm={4} md={3} lg={2}>
-              <Button variant="outlined" fullWidth onClick={() => reset()}>
+              <Button
+                variant="outlined"
+                fullWidth
+                onClick={clearMatrixEnterArrayField}
+              >
                 Clear field
               </Button>
             </Grid>
@@ -134,6 +164,7 @@ export const App = () => {
                 variant="contained"
                 fullWidth
                 onClick={handleSubmit(onSubmit)}
+                loading={loading}
               >
                 Submit DNA test
               </Button>

@@ -1,7 +1,7 @@
 import * as yup from "yup";
 import { insertMethods } from "./types";
 
-const validateStringArray = (matrix: string) => {
+export const validateStringArray = (matrix: string) => {
   try {
     const array = JSON?.parse(matrix);
     const isArray = Array?.isArray(array);
@@ -17,7 +17,7 @@ const validateStringArray = (matrix: string) => {
   }
 };
 
-const validateIsMultidimentionalArray = (matrix: []) => {
+export const validateIsMultidimentionalArray = (matrix: []) => {
   for (let i = 0; i < matrix?.length; i++) {
     if (Array?.isArray(matrix[i])) {
       return true;
@@ -26,7 +26,7 @@ const validateIsMultidimentionalArray = (matrix: []) => {
   return false;
 };
 
-const destructureMultidimentionalArray = (matrix: []): any[] => {
+export const destructureMultidimentionalArray = (matrix: []): any[] => {
   const flattened = [];
 
   for (let i = 0; i < matrix?.length; i++) {
@@ -40,7 +40,7 @@ const destructureMultidimentionalArray = (matrix: []): any[] => {
   return flattened;
 };
 
-const validateMatrixDimension = (matrix: []) => {
+export const validateMatrixDimension = (matrix: []) => {
   const matrixLength = destructureMultidimentionalArray(matrix)?.length;
   const dimension = Math.sqrt(matrixLength);
 
