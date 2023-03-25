@@ -3,7 +3,7 @@ import { styled } from "@mui/material/styles";
 
 export const Container = styled("div")`
   background: lightgray;
-  height: calc(100vh + 8px);
+  height: 100vh;
 `;
 
 export const LogoContainer = styled(Box)`

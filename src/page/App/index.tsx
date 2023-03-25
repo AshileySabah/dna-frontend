@@ -75,7 +75,9 @@ export const App = () => {
 
       <Grid container spacing={1} p={2}>
         <Grid item xs={12}>
-          <Typography>How do you want to insert the DNA data?</Typography>
+          <Typography fontSize={20}>
+            How do you want to insert the DNA data?
+          </Typography>
         </Grid>
         <Grid item xs={12} mb={2}>
           <Grid item xs={12} sm={12} md={3}>
