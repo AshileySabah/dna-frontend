@@ -1,214 +1,146 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Box, Grid, Typography, Button } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 
 import dnaLogo from "/dna-logo.png";
 import { validation } from "./validation";
-import { Input } from "../../components/Input";
+import { Input } from "../../components/Form/Input";
 import { useSnackbar } from "../../hooks/Snackbar";
-
-const createMatrix = (dimension: number) => {
-  const newMatrix: string[][] = [];
-  for (let i = 0; i < Number(dimension); i++) {
-    const row = new Array(Number(dimension))?.fill("");
-    newMatrix?.push(row);
-  }
-  return newMatrix;
-};
-
-const getVertical = (matrix: string[][]) => {
-  const dimension = matrix?.length;
-  const verticalArrays = [];
-  for (let column = 0; column < dimension; column++) {
-    const eachVerticalArrays = [];
-    for (let row = 0; row < dimension; row++) {
-      eachVerticalArrays?.push(matrix[row][column]);
-    }
-    verticalArrays?.push(eachVerticalArrays);
-  }
-  return verticalArrays;
-};
-
-const getDiagonal = (matrix: string[][]) => {
-  const dimension = matrix?.length;
-  const diagonalArrays = [];
-
-  const mainDiagonal = [];
-  for (let i = 0; i < dimension; i++) {
-    mainDiagonal?.push(matrix[i][i]);
-  }
-  diagonalArrays?.push(mainDiagonal);
-
-  const secondaryDiagonal = [];
-  for (let i = 0; i < dimension; i++) {
-    secondaryDiagonal?.push(matrix[i][dimension - i - 1]);
-  }
-  diagonalArrays?.push(secondaryDiagonal);
-
-  // Get remaining diagonals
-  for (let i = 1; i < dimension - 1; i++) {
-    const diagonal1 = [];
-    const diagonal2 = [];
-    for (let j = 0; j <= i; j++) {
-      diagonal1?.push(matrix[i - j][j]);
-      diagonal2?.push(matrix[dimension - 1 - i + j][dimension - 1 - j]);
-    }
-    diagonalArrays?.push(diagonal1);
-    diagonalArrays?.push(diagonal2);
-  }
-
-  for (let i = 1; i < dimension - 1; i++) {
-    const diagonal1 = [];
-    const diagonal2 = [];
-    for (let j = 0; j <= i; j++) {
-      diagonal1?.push(matrix[j][i - j]);
-      diagonal2?.push(matrix[dimension - 1 - j][dimension - 1 - i + j]);
-    }
-    diagonalArrays?.push(diagonal1);
-    diagonalArrays?.push(diagonal2);
-  }
-
-  // Remove empty diagonals
-  return diagonalArrays?.filter((diagonal) => diagonal?.length > 0);
-};
-
-const checkEqualAndConsecutiveItems = (array: string[]) => {
-  for (let i = 0; i < array?.length - 2; i++) {
-    if (array[i] === array[i + 1] && array[i + 1] === array[i + 2]) {
-      return true;
-    }
-  }
-  return false;
-};
-
-interface IDNATest {
-  dimension: number;
-  matrix: string[][];
-}
-
-const defaultValues: IDNATest = {
-  dimension: 3,
-  matrix: createMatrix(3),
-};
+import { createMatrix } from "./helpers";
+import { Button } from "../../components/Button";
+import { Container, LogoContainer } from "./styles";
+import { Radio } from "../../components/Form/Radio";
+import { IDNATest, defaultValues, insertMethods } from "./types";
 
 export const App = () => {
-  // hooks
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    watch,
-    setError,
-    clearErrors,
-    formState: { errors },
-    getValues,
-    reset,
-    trigger,
-  } = useForm<IDNATest>({
+  const { control, setValue, watch, reset, handleSubmit } = useForm<IDNATest>({
     defaultValues,
-    mode: "onChange",
+    mode: "onBlur",
     resolver: yupResolver(validation),
   });
   const { createSnack } = useSnackbar();
 
-  const dimension = watch("dimension");
-  const matrix = watch("matrix");
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const matrixFieldWidth = 100 / dimension;
-  const showAsRow = matrixFieldWidth < 10;
-  const showMatrix =
-    matrix?.length > 0 && dimension >= defaultValues?.dimension;
+  const dimension = watch("dimension");
+  const matrixInterfaceField = watch("matrixInterfaceField");
+  const insertMethod = watch("insertMethod");
+
+  const showMatrix = matrixInterfaceField?.length > 0 && dimension >= 3;
 
   useEffect(() => {
-    setValue("matrix", createMatrix(dimension));
+    setValue("matrixInterfaceField", createMatrix(Number(dimension)));
   }, [dimension]);
 
-  return (
-    <Box sx={{ backgroundColor: "lightblue", height: "calc(100vh - 72px)" }}>
-      <Box display="flex" alignItems="center">
-        <img
-          src={dnaLogo}
-          alt="DNA logo"
-          width={100}
-          style={{ marginRight: 10 }}
-        />
-        <Typography variant="h4">DNA Test</Typography>
-      </Box>
+  const getDNAResult = useCallback(async (data: IDNATest) => {
+    console.log(data);
+  }, []);
 
-      <Grid container spacing={1} mt={5} justifyContent="center">
-        <Grid item xs={12} sm={4} md={matrixFieldWidth <= 12.5 ? 3 : 2}>
-          <Grid container spacing={1} justifyContent="center">
-            <Grid item xs={12} sm={12} md={12}>
+  const onSubmit = async (data: IDNATest) => {
+    setLoading(true);
+    await getDNAResult(data);
+    setLoading(false);
+  };
+
+  return (
+    <Container>
+      <LogoContainer>
+        <img src={dnaLogo} alt="DNA logo" />
+        <Typography>DNA Test</Typography>
+      </LogoContainer>
+
+      <Grid container spacing={1} p={2}>
+        <Grid item xs={12}>
+          <Typography>How do you want to insert the DNA data?</Typography>
+        </Grid>
+        <Grid item xs={12} mb={2}>
+          <Grid item xs={12} sm={12} md={3}>
+            <Radio
+              name="insertMethod"
+              control={control}
+              radioGroupProps={{
+                row: true,
+              }}
+              options={Object.entries(insertMethods).map(([value, label]) => ({
+                value,
+                label,
+              }))}
+            />
+          </Grid>
+        </Grid>
+
+        {insertMethod === "MI" ? (
+          <>
+            <Grid item xs={12} sm={4} md={3} lg={2}>
               <Input
                 name="dimension"
                 control={control}
                 label="Matrix's dimension*"
               />
             </Grid>
-          </Grid>
-        </Grid>
-
-        <Grid item xs={12} sm={8} md={matrixFieldWidth <= 12.5 ? 5 : 4}>
-          <Grid container spacing={1} justifyContent="center">
-            <Grid item xs={12} sm={6} md={6}>
-              <Button variant="outlined" onClick={() => reset()}>
+            <Grid item xs={12} sm={4} md={3} lg={2}>
+              <Button variant="outlined" fullWidth onClick={() => reset()}>
                 Clear fields
               </Button>
             </Grid>
-            <Grid item xs={12} sm={6} md={6}>
-              <Button onClick={() => console.log(matrix)}>
+            <Grid item xs={12} sm={4} md={3} lg={2}>
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={handleSubmit(onSubmit)}
+              >
                 Submit DNA test
               </Button>
             </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
+          </>
+        ) : null}
 
-      {showMatrix &&
-        (showAsRow ? (
-          <Grid container spacing={1} mt={2} justifyContent="center">
-            <Grid item xs={12}>
-              {matrix?.map((row, rowIndex) => (
-                <Box key={rowIndex} display="flex">
-                  {row?.map((item, itemIndex) => (
-                    <Box key={itemIndex}>
-                      <Input
-                        name={`matrix.${rowIndex}.${itemIndex}`}
-                        control={control}
-                      />
-                    </Box>
-                  ))}
-                </Box>
-              ))}
-            </Grid>
+        {insertMethod === "MI" && showMatrix ? (
+          <Grid item xs={12}>
+            {matrixInterfaceField?.map((row, rowIndex) => (
+              <Box key={rowIndex} display="flex">
+                {row?.map((item, itemIndex) => (
+                  <Box key={itemIndex}>
+                    <Input
+                      name={`matrix.${rowIndex}.${itemIndex}`}
+                      control={control}
+                    />
+                  </Box>
+                ))}
+              </Box>
+            ))}
           </Grid>
-        ) : (
-          <Grid container spacing={1} mt={2} justifyContent="center">
-            <Grid
-              item
-              xs={12}
-              sm={12}
-              md={12}
-              sx={{ backgroundColor: "lightgrey" }}
-            >
-              {matrix?.map((row, rowIndex) => (
-                <Box key={rowIndex} display="flex">
-                  {row?.map((item, itemIndex) => (
-                    <Box key={itemIndex}>
-                      <Input
-                        name={`matrix.${rowIndex}.${itemIndex}`}
-                        control={control}
-                      />
-                    </Box>
-                  ))}
-                </Box>
-              ))}
+        ) : null}
+
+        {insertMethod === "EA" ? (
+          <>
+            <Grid item xs={12} sm={4} md={3} lg={2}>
+              <Input
+                name="matrixEnterArrayField"
+                control={control}
+                label="Matrix*"
+              />
             </Grid>
-          </Grid>
-        ))}
-    </Box>
+            <Grid item xs={12} sm={4} md={3} lg={2}>
+              <Button variant="outlined" fullWidth onClick={() => reset()}>
+                Clear field
+              </Button>
+            </Grid>
+            <Grid item xs={12} sm={4} md={3} lg={2}>
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={handleSubmit(onSubmit)}
+              >
+                Submit DNA test
+              </Button>
+            </Grid>
+          </>
+        ) : null}
+      </Grid>
+    </Container>
   );
 };
