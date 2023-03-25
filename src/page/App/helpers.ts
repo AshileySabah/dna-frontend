@@ -20,23 +20,9 @@ export const getVertical = (matrix: string[][]) => {
   return verticalArrays;
 };
 
-export const getDiagonal = (matrix: string[][]) => {
-  const dimension = matrix?.length;
+export const getRemaningDiagonal = (matrix: string[][], dimension: number) => {
   const diagonalArrays = [];
 
-  const mainDiagonal = [];
-  for (let i = 0; i < dimension; i++) {
-    mainDiagonal?.push(matrix[i][i]);
-  }
-  diagonalArrays?.push(mainDiagonal);
-
-  const secondaryDiagonal = [];
-  for (let i = 0; i < dimension; i++) {
-    secondaryDiagonal?.push(matrix[i][dimension - i - 1]);
-  }
-  diagonalArrays?.push(secondaryDiagonal);
-
-  // Get remaining diagonals
   for (let i = 1; i < dimension - 1; i++) {
     const diagonal1 = [];
     const diagonal2 = [];
@@ -59,8 +45,68 @@ export const getDiagonal = (matrix: string[][]) => {
     diagonalArrays?.push(diagonal2);
   }
 
+  return diagonalArrays;
+};
+
+export const reverseMultidimentionalArray = (matrix: string[][]) => {
+  const dimension = matrix?.length;
+  const newMatrix = [];
+
+  for (let i = 0; i < dimension; i++) {
+    const reverseArray = matrix[i]?.reverse();
+    newMatrix?.push(reverseArray);
+  }
+
+  return newMatrix;
+};
+
+export const removeDuplicateArrays = (matrix: string[][]) => {
+  const uniqueArrays: string[][] = [];
+  for (const array of matrix) {
+    let exists = false;
+    for (const uniqueArr of uniqueArrays) {
+      if (
+        array?.length === uniqueArr?.length &&
+        array?.every((elem) => uniqueArr?.includes(elem))
+      ) {
+        exists = true;
+        break;
+      }
+    }
+    if (!exists) {
+      uniqueArrays?.push(array);
+    }
+  }
+  return uniqueArrays;
+};
+
+export const getDiagonal = (matrix: string[][]) => {
+  const dimension = matrix?.length;
+  const diagonalArrays = [];
+
+  const mainDiagonal = [];
+  for (let i = 0; i < dimension; i++) {
+    mainDiagonal?.push(matrix[i][i]);
+  }
+  diagonalArrays?.push(mainDiagonal);
+
+  const secondaryDiagonal = [];
+  for (let i = 0; i < dimension; i++) {
+    secondaryDiagonal?.push(matrix[i][dimension - i - 1]);
+  }
+  diagonalArrays?.push(secondaryDiagonal);
+
+  const topLeftToRightBottom = getRemaningDiagonal(matrix, dimension);
+  const topTopRightToLeftBottom = getRemaningDiagonal(
+    reverseMultidimentionalArray(matrix),
+    dimension,
+  );
+
+  diagonalArrays?.push(...topLeftToRightBottom);
+  diagonalArrays?.push(...topTopRightToLeftBottom);
+
   // Remove empty diagonals
-  return diagonalArrays?.filter((diagonal) => diagonal?.length > 0);
+  return removeDuplicateArrays(diagonalArrays);
 };
 
 export const checkEqualAndConsecutiveItems = (array: string[]) => {
@@ -70,4 +116,43 @@ export const checkEqualAndConsecutiveItems = (array: string[]) => {
     }
   }
   return false;
+};
+
+export const identifyAnomalies = (matrix: string[][]) => {
+  const diagonalArray = getDiagonal(matrix);
+  const verticalArray = getVertical(matrix);
+
+  const diagonalOccurrences: number[] = [];
+  for (let i = 0; i < diagonalArray?.length; i++) {
+    const checkAnomaliesDiagonal = checkEqualAndConsecutiveItems(
+      diagonalArray[i],
+    );
+    if (checkAnomaliesDiagonal) {
+      diagonalOccurrences?.push(1);
+    }
+  }
+
+  const verticalOccurrences: number[] = [];
+  for (let i = 0; i < verticalArray?.length; i++) {
+    const checkAnomaliesVertical = checkEqualAndConsecutiveItems(
+      verticalArray[i],
+    );
+    if (checkAnomaliesVertical) {
+      verticalOccurrences?.push(1);
+    }
+  }
+
+  const horizontalOccurrences: number[] = [];
+  for (let i = 0; i < matrix?.length; i++) {
+    const checkAnomaliesHorizontal = checkEqualAndConsecutiveItems(matrix[i]);
+    if (checkAnomaliesHorizontal) {
+      horizontalOccurrences?.push(1);
+    }
+  }
+
+  return {
+    diagonalOccurrences: diagonalOccurrences?.length,
+    verticalOccurrences: verticalOccurrences?.length,
+    horizontalOccurrences: horizontalOccurrences?.length,
+  };
 };
