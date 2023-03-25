@@ -20,8 +20,29 @@ export const getVertical = (matrix: string[][]) => {
   return verticalArrays;
 };
 
-export const getRemaningDiagonal = (matrix: string[][], dimension: number) => {
+export const reverseMultidimentionalArray = (matrix: string[][]) => {
+  const dimension = matrix?.length;
+  const newMatrix = [];
+
+  for (let i = 0; i < dimension; i++) {
+    const reverseArray = matrix[i]?.reverse();
+    newMatrix?.push(reverseArray);
+  }
+
+  return newMatrix;
+};
+
+export const getOneSideDiagonal = (matrix: string[][]) => {
+  const dimension = matrix?.length;
   const diagonalArrays = [];
+
+  const mainDiagonal: string[] = [];
+  for (let i = 0; i < dimension; i++) {
+    mainDiagonal?.push(matrix[i][dimension - i - 1]);
+  }
+  if (mainDiagonal?.length >= 3) {
+    diagonalArrays?.push(mainDiagonal);
+  }
 
   for (let i = 1; i < dimension - 1; i++) {
     const diagonal1: string[] = [];
@@ -38,82 +59,15 @@ export const getRemaningDiagonal = (matrix: string[][], dimension: number) => {
     }
   }
 
-  for (let i = 1; i < dimension - 1; i++) {
-    const diagonal1: string[] = [];
-    const diagonal2: string[] = [];
-    for (let j = 0; j <= i; j++) {
-      diagonal1?.push(matrix[j][i - j]);
-      diagonal2?.push(matrix[dimension - 1 - j][dimension - 1 - i + j]);
-    }
-    if (diagonal1?.length >= 3) {
-      diagonalArrays?.push(diagonal1);
-    }
-    if (diagonal2?.length >= 3) {
-      diagonalArrays?.push(diagonal2);
-    }
-  }
-
   return diagonalArrays;
-};
-
-export const reverseMultidimentionalArray = (matrix: string[][]) => {
-  const dimension = matrix?.length;
-  const newMatrix = [];
-
-  for (let i = 0; i < dimension; i++) {
-    const reverseArray = matrix[i]?.reverse();
-    newMatrix?.push(reverseArray);
-  }
-
-  return newMatrix;
-};
-
-export const removeDuplicateArrays = (matrix: string[][]) => {
-  const uniqueArrays: string[][] = [];
-  for (const array of matrix) {
-    let exists = false;
-    for (const uniqueArr of uniqueArrays) {
-      if (
-        array?.length === uniqueArr?.length &&
-        array?.every((elem) => uniqueArr?.includes(elem))
-      ) {
-        exists = true;
-        break;
-      }
-    }
-    if (!exists) {
-      uniqueArrays?.push(array);
-    }
-  }
-  return uniqueArrays;
 };
 
 export const getDiagonal = (matrix: string[][]) => {
-  const dimension = matrix?.length;
-  const diagonalArrays = [];
-
-  const mainDiagonal = [];
-  for (let i = 0; i < dimension; i++) {
-    mainDiagonal?.push(matrix[i][i]);
-  }
-  diagonalArrays?.push(mainDiagonal);
-
-  const secondaryDiagonal = [];
-  for (let i = 0; i < dimension; i++) {
-    secondaryDiagonal?.push(matrix[i][dimension - i - 1]);
-  }
-  diagonalArrays?.push(secondaryDiagonal);
-
-  const topLeftToRightBottom = getRemaningDiagonal(matrix, dimension);
-  const topTopRightToLeftBottom = getRemaningDiagonal(
+  const rightBottomToLeftTop = getOneSideDiagonal(matrix);
+  const leftBottomToRighttop = getOneSideDiagonal(
     reverseMultidimentionalArray(matrix),
-    dimension,
   );
-
-  diagonalArrays?.push(...topLeftToRightBottom);
-  diagonalArrays?.push(...topTopRightToLeftBottom);
-
-  return diagonalArrays;
+  return [...rightBottomToLeftTop, ...leftBottomToRighttop];
 };
 
 export const checkEqualAndConsecutiveItems = (array: string[]) => {
@@ -158,7 +112,7 @@ export const identifyAnomalies = (matrix: string[][]) => {
   }
 
   return {
-    diagonalOccurrences: Math?.ceil(diagonalOccurrences?.length / 2),
+    diagonalOccurrences: diagonalOccurrences?.length,
     verticalOccurrences: verticalOccurrences?.length,
     horizontalOccurrences: horizontalOccurrences?.length,
   };
