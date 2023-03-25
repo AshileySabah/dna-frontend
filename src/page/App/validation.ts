@@ -41,7 +41,6 @@ const destructureMultidimentionalArray = (matrix: []): any[] => {
 };
 
 const validateMatrixDimension = (matrix: []) => {
-  console.log(matrix);
   const matrixLength = destructureMultidimentionalArray(matrix)?.length;
   const dimension = Math.sqrt(matrixLength);
 
@@ -57,53 +56,78 @@ export const validation = yup.object().shape({
     .transform((current, original) =>
       original === "" || original === undefined ? null : Number(original),
     )
-    .typeError("The dimension must be a numeric type.")
-    .min(3, "The minimum dimension is 3.")
-    .max(10, "The maximum dimension is 10.")
-    .required("Dimension is required."),
+    .nullable()
+    .when("insertMethod", {
+      is: "MI",
+      then: yup
+        .number()
+        .transform((current, original) =>
+          original === "" || original === undefined ? null : Number(original),
+        )
+        .typeError("The dimension must be a numeric type.")
+        .min(3, "The minimum dimension is 3.")
+        .max(10, "The maximum dimension is 10.")
+        .required("Dimension is required."),
+    }),
   matrixInterfaceField: yup
     .array()
-    .of(yup.array().of(yup.string().required("The matrix's field is required")))
-    .required("Matrix is required.")
-    .test(
-      "testIfIsMultidimentional",
-      "This array is not a multidimentional array.",
-      (array: any) => validateIsMultidimentionalArray(array),
-    )
-    .test(
-      "testIfDimensionIsAcceptable",
-      "This multidimentional array does not have the dimension between 3 and 2000.",
-      (array: any) => validateMatrixDimension(array),
-    ),
+    .notRequired()
+    .when("insertMethod", {
+      is: "MI",
+      then: yup
+        .array()
+        .of(
+          yup
+            .array()
+            .of(yup.string().required("The matrix's field is required")),
+        )
+        .required("Matrix is required.")
+        .test(
+          "testIfIsMultidimentional",
+          "This array is not a multidimentional array.",
+          (array: any) => validateIsMultidimentionalArray(array),
+        )
+        .test(
+          "testIfDimensionIsAcceptable",
+          "This multidimentional array does not have the dimension between 3 and 2000.",
+          (array: any) => validateMatrixDimension(array),
+        ),
+    }),
   matrixEnterArrayField: yup
     .mixed()
-    .required("Matrix is required.")
-    .test(
-      "testIfStringIsEmpty",
-      "Matrix is required.",
-      (array: any) => array !== "",
-    )
-    .test(
-      "testIfStringIsArray",
-      "The typed value is not a array.",
-      (array: any) => validateStringArray(array)?.isArray,
-    )
-    .test(
-      "testIfIsMultidimentional",
-      "This array is not a multidimentional array.",
-      (array: any) => {
-        const parsedArray = validateStringArray(array)?.array;
-        return validateIsMultidimentionalArray(parsedArray);
-      },
-    )
-    .test(
-      "testIfDimensionIsAcceptable",
-      "This multidimentional array does not have the dimension between 3 and 2000.",
-      (array: any) => {
-        const parsedArray = validateStringArray(array)?.array;
-        return validateMatrixDimension(parsedArray);
-      },
-    ),
+    .notRequired()
+    .when("insertMethod", {
+      is: "EA",
+      then: yup
+        .mixed()
+        .required("Matrix is required.")
+        .test(
+          "testIfStringIsEmpty",
+          "Matrix is required.",
+          (array: any) => array !== "",
+        )
+        .test(
+          "testIfStringIsArray",
+          "The typed value is not a array.",
+          (array: any) => validateStringArray(array)?.isArray,
+        )
+        .test(
+          "testIfIsMultidimentional",
+          "This array is not a multidimentional array.",
+          (array: any) => {
+            const parsedArray = validateStringArray(array)?.array;
+            return validateIsMultidimentionalArray(parsedArray);
+          },
+        )
+        .test(
+          "testIfDimensionIsAcceptable",
+          "This multidimentional array does not have the dimension between 3 and 2000.",
+          (array: any) => {
+            const parsedArray = validateStringArray(array)?.array;
+            return validateMatrixDimension(parsedArray);
+          },
+        ),
+    }),
   insertMethod: yup
     .string()
     .oneOf(Object.entries(insertMethods).map(([value]) => value))
