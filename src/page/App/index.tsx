@@ -6,7 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Grid, Typography } from "@mui/material";
 
 import dnaLogo from "/dna-logo.png";
-import { validateStringArray, validation } from "./validation";
+import { validation } from "./validation";
 import { Input } from "../../components/Form/Input";
 import { useSnackbar } from "../../hooks/Snackbar";
 import { createMatrix } from "./helpers";
@@ -42,8 +42,8 @@ export const App = () => {
     const payload = {
       matrix:
         data?.insertMethod === "MI"
-          ? data?.matrixInterfaceField
-          : validateStringArray(data?.matrixEnterArrayField)?.array,
+          ? JSON?.stringify(data?.matrixInterfaceField)
+          : data?.matrixEnterArrayField,
     };
 
     console.log(payload);
@@ -170,6 +170,11 @@ export const App = () => {
               >
                 Submit DNA test
               </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography color="GrayText">
+                Example: [[1, 2, 3], [1, 4, 5], [1, 2, 4]]
+              </Typography>
             </Grid>
           </>
         ) : null}
