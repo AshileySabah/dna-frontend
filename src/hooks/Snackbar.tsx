@@ -116,14 +116,6 @@ const SnackProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-function useSnackbar(): ISnackContextData {
-  const context = useContext(SnackContext);
-
-  if (!context) {
-    throw new Error("useSnackbar must be used within a SnackProvider");
-  }
-
-  return context;
-}
+const useSnackbar = (): ISnackContextData => useContext(SnackContext);
 
 export { SnackProvider, useSnackbar };
