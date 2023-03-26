@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
-import { Alert, AlertTitle } from "@mui/material";
+import { Alert } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
 import { v4 as uuidv4 } from "uuid";
 
@@ -25,24 +25,6 @@ const RenderSnack = ({
   handleClose,
 }: ISnackMessage) => {
   const messageId = `message-${id}`;
-  let title;
-
-  switch (severity) {
-    case "error":
-      title = "Erro";
-      break;
-    case "warning":
-      title = "Aviso";
-      break;
-    case "info":
-      title = "Informação";
-      break;
-    case "success":
-      title = "Sucesso";
-      break;
-    default:
-      break;
-  }
 
   return (
     <Snackbar
@@ -58,7 +40,6 @@ const RenderSnack = ({
       onClose={handleClose}
     >
       <Alert id={messageId} severity={severity} onClose={handleClose}>
-        <AlertTitle>{title}</AlertTitle>
         {message}
       </Alert>
     </Snackbar>

@@ -17,7 +17,7 @@ import { IDNATest, defaultValues, insertMethods } from "./types";
 import { dnaService } from "../../services/DNA";
 import { getErrorMessage } from "../../services/Error/getErrorMessage";
 
-export const App = () => {
+export const Home = () => {
   const { control, setValue, watch, handleSubmit, clearErrors } =
     useForm<IDNATest>({
       defaultValues,
