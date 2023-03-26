@@ -4,7 +4,6 @@ export interface IMatrixDTO {
 
 export interface IValidateAnomalyDTO {
   message: string;
-  anomaly: boolean;
 }
 
 export interface IStatisticsDTO {

@@ -2,7 +2,7 @@ import { api } from "../api";
 import { IStatisticsDTO, IMatrixDTO, IValidateAnomalyDTO } from "./types";
 
 const validateAnomaly = (data: IMatrixDTO): Promise<IValidateAnomalyDTO> => {
-  return api.post("/validate-anomaly ", data);
+  return api.post("/validate-anomaly ", data).then(({ data }) => data);
 };
 
 const getStatistcs = (): Promise<IStatisticsDTO> => {
