@@ -16,6 +16,8 @@ import { Radio } from "../../components/Form/Radio";
 import { IDNATest, defaultValues, insertMethods } from "./types";
 import { dnaService } from "../../services/DNA";
 import { getErrorMessage } from "../../services/Error/getErrorMessage";
+import { useModal } from "../../hooks/Modal";
+import { Statitcs } from "../Statitcs";
 
 export const Home = () => {
   const { control, setValue, watch, handleSubmit, clearErrors } =
@@ -25,6 +27,7 @@ export const Home = () => {
       resolver: yupResolver(validation),
     });
   const { createSnack } = useSnackbar();
+  const { createModal } = useModal();
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -76,6 +79,15 @@ export const Home = () => {
   const clearMatrixEnterArrayField = () => {
     setValue("matrixEnterArrayField", "");
     clearErrors();
+  };
+
+  const showStatistics = () => {
+    createModal({
+      message: {
+        close: true,
+        component: <Statitcs />,
+      },
+    });
   };
 
   return (
@@ -135,6 +147,17 @@ export const Home = () => {
                 Submit DNA test
               </Button>
             </Grid>
+            <Grid item xs={12} sm={12} md={3} lg={2}>
+              <Button
+                variant="contained"
+                color="secondary"
+                fullWidth
+                onClick={showStatistics}
+                loading={loading}
+              >
+                Check statistics
+              </Button>
+            </Grid>
           </>
         ) : null}
 
@@ -181,6 +204,17 @@ export const Home = () => {
                 loading={loading}
               >
                 Submit DNA test
+              </Button>
+            </Grid>
+            <Grid item xs={12} sm={12} md={3} lg={2}>
+              <Button
+                variant="contained"
+                color="secondary"
+                fullWidth
+                onClick={showStatistics}
+                loading={loading}
+              >
+                Check statistics
               </Button>
             </Grid>
             <Grid item xs={12}>
