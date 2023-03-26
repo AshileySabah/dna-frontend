@@ -19,7 +19,7 @@ export const Button: React.FC<IButtonProps> = ({ loading, ...buttonProps }) => {
       endIcon={endIcon}
       startIcon={startIcon}
     >
-      {loading ? "Carregando..." : children}
+      {loading ? "Loading..." : children}
     </Container>
   );
 };
