@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -14,6 +14,8 @@ import { Button } from "../../components/Button";
 import { Container, LogoContainer } from "./styles";
 import { Radio } from "../../components/Form/Radio";
 import { IDNATest, defaultValues, insertMethods } from "./types";
+import { dnaService } from "../../services/DNA";
+import { getErrorMessage } from "../../services/Error/getErrorMessage";
 
 export const App = () => {
   const { control, setValue, watch, handleSubmit, clearErrors } =
@@ -38,20 +40,30 @@ export const App = () => {
     }
   }, [dimension]);
 
-  const getDNAResult = useCallback(async (data: IDNATest) => {
-    const payload = {
-      matrix:
+  const DNAResult = async (data: IDNATest) => {
+    try {
+      const matrix =
         data?.insertMethod === "MI"
           ? JSON?.stringify(data?.matrixInterfaceField)
-          : data?.matrixEnterArrayField,
-    };
+          : data?.matrixEnterArrayField;
 
-    console.log(payload);
-  }, []);
+      const result = await dnaService?.validateAnomaly({ matrix });
+
+      createSnack({
+        severity: "success",
+        message: result?.message,
+      });
+    } catch (error: Error | unknown) {
+      createSnack({
+        severity: "error",
+        message: getErrorMessage(error),
+      });
+    }
+  };
 
   const onSubmit = async (data: IDNATest) => {
     setLoading(true);
-    await getDNAResult(data);
+    await DNAResult(data);
     setLoading(false);
   };
 
