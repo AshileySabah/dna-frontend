@@ -4,6 +4,7 @@ import { useSnackbar } from "../../hooks/Snackbar";
 import { dnaService } from "../../services/DNA";
 import { getErrorMessage } from "../../services/Error/getErrorMessage";
 import { IStatisticsDTO } from "../../services/DNA/types";
+import { ratioMask } from "../../utils/ratioMask";
 
 export const Statitcs = () => {
   const { createSnack } = useSnackbar();
@@ -55,7 +56,9 @@ export const Statitcs = () => {
           <Typography variant="h5" mt={3}>
             Ratio
           </Typography>
-          <Typography color="blue">{statistcs?.ratio ?? 0}</Typography>
+          <Typography color="blue">
+            {ratioMask(statistcs?.ratio) ?? 0}
+          </Typography>
         </>
       )}
     </Box>
