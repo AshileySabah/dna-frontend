@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { useSnackbar } from "../../hooks/Snackbar";
 import { dnaService } from "../../services/DNA";
 import { getErrorMessage } from "../../services/Error/getErrorMessage";
@@ -12,34 +12,52 @@ export const Statitcs = () => {
     {} as IStatisticsDTO,
   );
 
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const getStatistcs = async () => {
+    try {
+      const result = await dnaService?.getStatistcs();
+      setStatistcs(result);
+    } catch (error: Error | unknown) {
+      createSnack({
+        severity: "error",
+        message: getErrorMessage(error),
+      });
+    }
+  };
+
   useEffect(() => {
     (async () => {
-      try {
-        const result = await dnaService?.getStatistcs();
-        setStatistcs(result);
-      } catch (error: Error | unknown) {
-        createSnack({
-          severity: "error",
-          message: getErrorMessage(error),
-        });
-      }
+      setLoading(true);
+      await getStatistcs();
+      setLoading(false);
     })();
   }, []);
 
   return (
     <Box sx={{ px: 5, pb: 3 }} justifyContent="center" textAlign="center">
-      <Typography variant="h5">Registered quantity of anomalies</Typography>
-      <Typography color="red">{statistcs?.count_anomalies}</Typography>
+      {loading ? (
+        <Box sx={{ px: 5, pb: 1 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <>
+          <Typography variant="h5">Registered quantity of anomalies</Typography>
+          <Typography color="red">{statistcs?.count_anomalies ?? 0}</Typography>
 
-      <Typography variant="h5" mt={3}>
-        Registered quantity of non anomalies
-      </Typography>
-      <Typography color="green">{statistcs?.count_no_anomalies}</Typography>
+          <Typography variant="h5" mt={3}>
+            Registered quantity of non anomalies
+          </Typography>
+          <Typography color="green">
+            {statistcs?.count_no_anomalies ?? 0}
+          </Typography>
 
-      <Typography variant="h5" mt={3}>
-        Ratio
-      </Typography>
-      <Typography color="blue">{statistcs?.ratio}</Typography>
+          <Typography variant="h5" mt={3}>
+            Ratio
+          </Typography>
+          <Typography color="blue">{statistcs?.ratio ?? 0}</Typography>
+        </>
+      )}
     </Box>
   );
 };
