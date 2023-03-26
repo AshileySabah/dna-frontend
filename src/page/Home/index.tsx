@@ -153,7 +153,6 @@ export const Home = () => {
                 color="secondary"
                 fullWidth
                 onClick={showStatistics}
-                loading={loading}
               >
                 Check statistics
               </Button>
@@ -212,7 +211,6 @@ export const Home = () => {
                 color="secondary"
                 fullWidth
                 onClick={showStatistics}
-                loading={loading}
               >
                 Check statistics
               </Button>
